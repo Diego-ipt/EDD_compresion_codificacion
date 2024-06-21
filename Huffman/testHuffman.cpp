@@ -1,13 +1,24 @@
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <sstream>
 #include "metodos_huffman.h"
 
 using namespace std;
 
 int main() {
-    string cadena = "tangananica-tangananatangananica-tanganana";
+    ifstream archivo("entrada.txt");
+    if(!archivo.is_open()){
+        cerr << "No se pudo abrir el archivo. " << endl;
+        return 1;
+    }
+    stringstream buffer;
+    buffer << archivo.rdbuf();
+    string contenido = buffer.str();
 
-    auto codificado = metodos_huffman::codificar(cadena);
+    //string cadena = "tangananica-tanganana";
+
+    auto codificado = metodos_huffman::codificar(contenido);
 
     string mensaje_cod = codificado.first;
 
@@ -15,11 +26,11 @@ int main() {
 
     string mensaje_decod = decodificado;
 
-    cout << "mensaje original: " << cadena << endl;
+    //cout << "mensaje original: " << contenido << endl;
     cout << "mensaje codificado: " << mensaje_cod << endl;
-    cout << "mensaje decodificado: " << mensaje_decod << endl;
-    cout << "size bits mensaje original: " << cadena.size() * 8 << endl;
-    cout << "size bits mensaje_cod: " << metodos_huffman::sizeBits_mensaje_cod(mensaje_cod) << endl;
+    //cout << "mensaje decodificado: " << mensaje_decod << endl;
+    cout << "size bits mensaje cod: " << contenido.size() * 8 << endl;
+    cout << "size bits mensaje_decod: " << metodos_huffman::sizeBits_mensaje_comp(mensaje_cod) << endl;
 
     return 0;
 }
