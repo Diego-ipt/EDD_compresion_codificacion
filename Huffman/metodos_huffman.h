@@ -113,7 +113,7 @@ class metodos_huffman {
             return mensaje_decod;
         }
 
-        static size_t sizeBits_mensaje_comp(string& mensaje_comp) {
+        static size_t sizeBits_mensaje_cod(string& mensaje_comp) {
             return mensaje_comp.size();
         }
 
