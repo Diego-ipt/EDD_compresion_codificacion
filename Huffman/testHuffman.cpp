@@ -34,15 +34,18 @@ int main() {
 
     //string cadena = "tangananica-tanganana";
     auto start = std::chrono::high_resolution_clock::now();
-
     auto codificado = metodos_huffman::codificar(contenido);
     string mensaje_cod = codificado.first;
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> elapsed = end - start;
+    cout << "Tiempo de ejecución: " << elapsed.count() << " ms" << endl;
+
+    auto start1 = chrono::high_resolution_clock::now();    
     auto decodificado = metodos_huffman::decodificar(mensaje_cod, codificado.second);
     string mensaje_decod = decodificado;
-    auto end = chrono::high_resolution_clock::now();
-
-    chrono::duration<double, milli> elapsed = end - start;
-    //cout << "Tiempo de ejecución: " << elapsed.count() << " ms" << endl;
+    auto end1 = std::chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> elapsed1 = end1 - start1;
+    cout << "Tiempo de decompresión: " << elapsed1.count() << " ms" << endl;
 
     //cout << "mensaje original: " << contenido << endl;
     //cout << "mensaje codificado: " << mensaje_cod << endl;
