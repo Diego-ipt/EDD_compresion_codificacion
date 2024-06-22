@@ -29,9 +29,7 @@ class metodos_lz{
                     j = i;
                     j_aux = i;
                     for (j; j < size && k < j_aux; j++, k++) {
-                        if (mensaje[k] == mensaje[j]) {
-                            sub += mensaje[k];
-                        } else {
+                        if (mensaje[k] != mensaje[j]) {
                             break;
                         }
                     }
