@@ -5,15 +5,30 @@
 #include "metodos_huffman.h"
 
 using namespace std;
-
+const size_t MAX_SIZE = 20 * 1024 * 1024;
 int main() {
-    ifstream archivo("entrada.txt");
-    if(!archivo.is_open()){
-        cerr << "No se pudo abrir el archivo. " << endl;
+    ifstream inputFile("entrada.txt", ios::binary);
+    if (!inputFile) {
+        cerr << "No se pudo abrir el archivo." << endl;
         return 1;
     }
-    stringstream buffer;
-    buffer << archivo.rdbuf();
+
+    ostringstream buffer;
+    char chunk[4096];
+    size_t totalRead = 0;
+
+    while (inputFile.read(chunk, sizeof(chunk))) {
+        size_t bytesRead = inputFile.gcount();
+        totalRead += bytesRead;
+        buffer.write(chunk, bytesRead);
+        if (totalRead >= MAX_SIZE) {
+            break;
+        }
+    }
+    if (totalRead < MAX_SIZE) {
+        inputFile.read(chunk, MAX_SIZE - totalRead);
+        buffer.write(chunk, inputFile.gcount());
+    }
     string contenido = buffer.str();
 
     //string cadena = "tangananica-tanganana";
@@ -27,10 +42,11 @@ int main() {
     string mensaje_decod = decodificado;
 
     //cout << "mensaje original: " << contenido << endl;
-    cout << "mensaje codificado: " << mensaje_cod << endl;
+    //cout << "mensaje codificado: " << mensaje_cod << endl;
     //cout << "mensaje decodificado: " << mensaje_decod << endl;
     cout << "size bits mensaje cod: " << contenido.size() * 8 << endl;
     cout << "size bits mensaje_decod: " << metodos_huffman::sizeBits_mensaje_comp(mensaje_cod) << endl;
+    inputFile.close(); 
 
     return 0;
 }
