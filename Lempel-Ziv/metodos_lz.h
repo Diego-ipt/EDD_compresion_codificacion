@@ -11,13 +11,17 @@ using namespace std;
 
 class metodos_lz{
     public:
+    /* Método de Compresión
+    * Comprime un mensaje utilizando un algoritmo LZ
+    * mensaje: Cadena de texto a comprimir
+    * return: Una cola de pares que representa el mensaje comprimido
+    */
         static queue<pair<string, int>> comprimir(string& mensaje) {
             int size = mensaje.length();
             unordered_map<char, int> diccionario;
             queue<pair<string, int>> mensaje_comp;
             int k, aux_k, j, j_aux;
             char c;
-            string sub;
             for (int i = 0; i < size; i++) {
                 c = mensaje[i];
                 if(diccionario.find(c) == diccionario.end()) {
@@ -40,7 +44,11 @@ class metodos_lz{
 
             return mensaje_comp;
         }
-
+    /* Método de Descompresión
+    * Descomprime un mensaje comprimido utilizando el formato de cola de pares
+    * mensaje_comp: Cola de pares que representa el mensaje comprimido
+    * return: Cadena de texto descomprimida
+    */
         static string descomprimir(queue<pair<string, int>> mensaje_comp) {
             string mensaje_descomp;
             while(!mensaje_comp.empty()) {
@@ -54,7 +62,11 @@ class metodos_lz{
             }
             return mensaje_descomp;
         }
-
+    /* Método para Calcular el Tamaño en Bytes del Mensaje Comprimido
+    * Calcula el tamaño en bytes del mensaje comprimido
+    * mensaje_comp: Cola de pares que representa el mensaje comprimido
+    * return: Tamaño en bytes del mensaje comprimido
+    */
         static size_t sizeBytes_mensaje_comp(queue<pair<string, int>> mensaje_comp) {
             return mensaje_comp.size() * sizeof(pair<char, int>);
         }
