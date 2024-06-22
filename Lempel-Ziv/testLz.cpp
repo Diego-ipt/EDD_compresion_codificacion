@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "metodos_lz.h"
-
+#include <chrono>
 
 using namespace std;
 
@@ -40,8 +40,13 @@ int main() {
     //cout << "Mensaje original: " << contenido << endl;
 
     // Comprimir el mensaje
+    auto start = chrono::high_resolution_clock::now();
     queue<pair<string, int>> mensaje_comp = lz.comprimir(contenido);
     string mensaje_descomp = lz.descomprimir(mensaje_comp);
+    auto end = std::chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> elapsed = end - start;
+
+    cout << "Tiempo de ejecución: " << elapsed.count() << " ms" << endl;
     // Mostrar la cola de pares comprimidos
     //cout << "Mensaje comprimido (cola de pares): ";
     //while (!mensaje_comp.empty()) {
