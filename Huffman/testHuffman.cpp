@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "metodos_huffman.h"
+#include <chrono>
 
 using namespace std;
 const size_t MAX_SIZE = 20 * 1024 * 1024;
@@ -32,14 +33,16 @@ int main() {
     string contenido = buffer.str();
 
     //string cadena = "tangananica-tanganana";
+    auto start = std::chrono::high_resolution_clock::now();
 
     auto codificado = metodos_huffman::codificar(contenido);
-
     string mensaje_cod = codificado.first;
-
     auto decodificado = metodos_huffman::decodificar(mensaje_cod, codificado.second);
-
     string mensaje_decod = decodificado;
+    auto end = chrono::high_resolution_clock::now();
+
+    chrono::duration<double, milli> elapsed = end - start;
+    //cout << "Tiempo de ejecución: " << elapsed.count() << " ms" << endl;
 
     //cout << "mensaje original: " << contenido << endl;
     //cout << "mensaje codificado: " << mensaje_cod << endl;
