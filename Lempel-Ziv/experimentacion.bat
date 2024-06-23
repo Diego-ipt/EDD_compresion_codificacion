@@ -18,18 +18,22 @@ REM Crear o limpiar el archivo de log
 > experiment_results_ID_open.log echo.
 
 REM Imprimir el encabezado CSV en el archivo de salida final
-echo Tamaño_MB,Ejecución,Compresión_Promedio_ns,Compresión_Desviación_Estándar_ns,Descompresión_Promedio_ns,Descompresión_Desviación_Estándar_ns > lempel_ziv_experiments.csv
+echo Nombre_archivo,Size_archivo,Size_Comprimido_Bytes,Compresion_Promedio_ms,Compresion_Desv_Estandar,Descompresion_Promedio_ms,Descompresion_Desv_Estandar > lempel_ziv_experiments.csv
 
 
 :: Lista de tamaños de entrada en MB
-set "sizes=1 5 7 10 15 17 20"
-set "archivo_a_leer=ADN.txt"
+set "sizes=1 5"
+set "archivos=..\Textos\dna.txt ..\Textos\xml.txt ..\Textos\english.txt ..\Textos\pitches.txt ..\Textos\proteins.txt ..\Textos\sources.txt"
+
 :: Ejecutar el programa para cada tamaño y guardar las salidas
-for %%s in (%sizes%) do (
-    echo %%s >> experiment_results_ID_open.log
-    :: Ejecutar el programa y guardar salida en archivo temporal
-    .\test_ID.exe %%s %archivo_a_leer% >> experiment_results_ID_open.log
+for %%f in (%archivos%) do (
+    for %%s in (%sizes%) do (
+        :: Ejecutar el programa y guardar salida en archivo temporal
+        echo Test file %%f with size %%s on Lempel Ziv
+        .\testLz.exe %%s %%f >> experiment_results_ID_open.log
+    )
 )
+
 REM Redirigir la salida del log al archivo CSV final
 type experiment_results_ID_open.log >> lempel_ziv_experiments.csv
 

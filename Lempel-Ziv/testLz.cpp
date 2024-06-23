@@ -5,9 +5,10 @@
 #include "metodos_lz.h"
 #include <chrono>
 #include <cmath>
+#include <queue>
+#include<vector>
+
 using namespace std;
-
-
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -15,9 +16,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    size_t MAX_SIZE = stoi(argv[1]) * 1024 * 1024;; // Tamaño de texto a comprimir
-    string fileName = argv[2]; //TEXTO A PROBAR .txt
-
+    size_t MAX_SIZE = stoi(argv[1]) * 1024 * 1024; // Tamaño de texto a comprimir
+    string fileName = argv[2]; // TEXTO A PROBAR .txt
 
     ifstream inputFile(fileName, ios::binary);
     if (!inputFile) {
@@ -29,43 +29,55 @@ int main(int argc, char* argv[]) {
     char chunk[4096];
     size_t totalRead = 0;
 
-    while (inputFile.read(chunk, sizeof(chunk))) {
+    while (totalRead < MAX_SIZE && inputFile.read(chunk, min(sizeof(chunk), MAX_SIZE - totalRead))) {
         size_t bytesRead = inputFile.gcount();
         totalRead += bytesRead;
         buffer.write(chunk, bytesRead);
-        if (totalRead >= MAX_SIZE) {
-            break;
-        }
     }
-    if (totalRead < MAX_SIZE) {
+
+    // Verificar si quedan bytes por leer después de salir del bucle
+    if (totalRead < MAX_SIZE && inputFile) {
         inputFile.read(chunk, MAX_SIZE - totalRead);
         buffer.write(chunk, inputFile.gcount());
     }
-    vector<long long> duraciones;
+    vector<double> duraciones;
     string contenido = buffer.str();
     queue<pair<string, int>> mensaje_comp;
-    for(int i=0; i < 30; i++){
+    size_t bytes_comprimidos;
+    for(int i=0; i < 5; i++){
         auto start = chrono::high_resolution_clock::now();
         mensaje_comp = metodos_lz::comprimir(contenido);
         auto end = chrono::high_resolution_clock::now();
-        auto duration_open = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        auto duration_open = chrono::duration_cast<chrono::milliseconds>(end - start).count();
         duraciones.push_back(duration_open);
+        if(i == 0) {
+            bytes_comprimidos = metodos_lz::sizeBytes_mensaje_comp(mensaje_comp);
+        }
     }
+
     // Calcular el promedio
-    long long suma = 0;
+    double suma = 0;
     for(const auto& duracion : duraciones) {
         suma += duracion;
     }
-    double promedio = static_cast<double>(suma) / duraciones.size();
+    double promedio = suma / duraciones.size();
     // Calcular la desviación estándar
     double suma_diferencias_cuadradas = 0;
     for(const auto& duracion : duraciones) {
         suma_diferencias_cuadradas += pow(duracion - promedio, 2);
     }
-    double desviacion_estandar = sqrt(suma_diferencias_cuadradas / duraciones.size());
+    double desviacion_estandar = sqrt(suma_diferencias_cuadradas / (duraciones.size() - 1));
 
-    cout<< promedio<<","<<desviacion_estandar<<",";
+    string tamaño_arch = string(argv[1]) + "MB";
 
+    cout << fileName << "," << tamaño_arch << "," << bytes_comprimidos << "," << promedio << ","<< desviacion_estandar << ",";
+    
+    // Registro de depuración para tiempos de compresión
+    cout << "Compresion Tiempos: ";
+    for(const auto& duracion : duraciones) {
+        cout << duracion << " ";
+    }
+    cout << endl;
 
     // Reiniciar el vector de duraciones para los tiempos de descompresión
     duraciones.clear();
@@ -75,7 +87,7 @@ int main(int argc, char* argv[]) {
         auto start = chrono::high_resolution_clock::now();
         mensaje_descomp = metodos_lz::descomprimir(mensaje_comp);
         auto end = chrono::high_resolution_clock::now();
-        auto duration_open = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        auto duration_open = chrono::duration_cast<chrono::milliseconds>(end - start).count();
         duraciones.push_back(duration_open);
     }
     // Calcular el promedio
@@ -83,15 +95,21 @@ int main(int argc, char* argv[]) {
     for(const auto& duracion : duraciones) {
         suma += duracion;
     }
-    promedio = static_cast<double>(suma) / duraciones.size();
+    promedio = suma / duraciones.size();
     // Calcular la desviación estándar
     suma_diferencias_cuadradas = 0;
     for(const auto& duracion : duraciones) {
         suma_diferencias_cuadradas += pow(duracion - promedio, 2);
     }
-    desviacion_estandar = sqrt(suma_diferencias_cuadradas / duraciones.size());
+    desviacion_estandar = sqrt(suma_diferencias_cuadradas / (duraciones.size() - 1));
 
     cout<< promedio<<","<<desviacion_estandar<<endl;
+
+    cout << "Descompresion Tiempos: ";
+    for(const auto& duracion : duraciones) {
+        cout << duracion << " ";
+    }
+    cout << endl;
 
     inputFile.close();
 
