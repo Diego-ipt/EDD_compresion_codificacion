@@ -1,0 +1,14 @@
+Nombre_archivo,Size_archivo,Size_codificado_Bytes,Codificacion_Promedio_ms,Codificacion_Desv_Estandar,Decodificacion_Promedio_ms,Decodificacion_Desv_Estandar 
+
+..\Textos\dna.txt,1MB,292786,143,3.937,37.6,0.547723
+..\Textos\dna.txt,5MB,1459270,712,11.6833,181.2,0.83666
+..\Textos\xml.txt,1MB,687797,105.4,1.51658,82,0.707107
+..\Textos\xml.txt,5MB,3456431,528,8.45577,419.4,4.97996
+..\Textos\english.txt,1MB,605034,112.6,2.60768,76.2,6.22093
+..\Textos\english.txt,5MB,3010783,604,3.80789,372.8,13.5904
+..\Textos\pitches.txt,1MB,697505,105,1.73205,79.2,1.30384
+..\Textos\pitches.txt,5MB,3669836,536.4,30.1795,394.2,4.86826
+..\Textos\proteins.txt,1MB,555146,106.2,1.48324,68.2,1.78885
+..\Textos\proteins.txt,5MB,2781869,524.4,4.61519,337.2,4.02492
+..\Textos\sources.txt,1MB,725292,106.8,1.92354,80.6,0.547723
+..\Textos\sources.txt,5MB,3657627,526,2.64575,426.2,13.3492

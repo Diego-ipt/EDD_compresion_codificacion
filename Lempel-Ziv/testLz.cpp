@@ -71,13 +71,6 @@ int main(int argc, char* argv[]) {
     string tamaño_arch = string(argv[1]) + "MB";
 
     cout << fileName << "," << tamaño_arch << "," << bytes_comprimidos << "," << promedio << ","<< desviacion_estandar << ",";
-    
-    // Registro de depuración para tiempos de compresión
-    cout << "Compresion Tiempos: ";
-    for(const auto& duracion : duraciones) {
-        cout << duracion << " ";
-    }
-    cout << endl;
 
     // Reiniciar el vector de duraciones para los tiempos de descompresión
     duraciones.clear();
@@ -104,12 +97,6 @@ int main(int argc, char* argv[]) {
     desviacion_estandar = sqrt(suma_diferencias_cuadradas / (duraciones.size() - 1));
 
     cout<< promedio<<","<<desviacion_estandar<<endl;
-
-    cout << "Descompresion Tiempos: ";
-    for(const auto& duracion : duraciones) {
-        cout << duracion << " ";
-    }
-    cout << endl;
 
     inputFile.close();
 
