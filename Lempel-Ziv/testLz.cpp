@@ -4,14 +4,22 @@
 #include <sstream>
 #include "metodos_lz.h"
 #include <chrono>
-
+#include <cmath>
 using namespace std;
 
-using namespace std;
-const size_t MAX_SIZE = 20 * 1024 * 1024;
-int main() {
-    METODOS_LZ lz;
-    ifstream inputFile("entrada.txt", ios::binary);
+
+
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        cerr << "Uso: " << argv[0] << " <tamaño en MB> <nombre del archivo>" << endl;
+        return 1;
+    }
+
+    size_t MAX_SIZE = stoi(argv[1]) * 1024 * 1024;; // Tamaño de texto a comprimir
+    string fileName = argv[2]; //TEXTO A PROBAR .txt
+
+
+    ifstream inputFile(fileName, ios::binary);
     if (!inputFile) {
         cerr << "No se pudo abrir el archivo." << endl;
         return 1;
@@ -33,33 +41,57 @@ int main() {
         inputFile.read(chunk, MAX_SIZE - totalRead);
         buffer.write(chunk, inputFile.gcount());
     }
+    vector<long long> duraciones;
     string contenido = buffer.str();
+    queue<pair<string, int>> mensaje_comp;
+    for(int i=0; i < 30; i++){
+        auto start = chrono::high_resolution_clock::now();
+        mensaje_comp = metodos_lz::comprimir(contenido);
+        auto end = chrono::high_resolution_clock::now();
+        auto duration_open = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        duraciones.push_back(duration_open);
+    }
+    // Calcular el promedio
+    long long suma = 0;
+    for(const auto& duracion : duraciones) {
+        suma += duracion;
+    }
+    double promedio = static_cast<double>(suma) / duraciones.size();
+    // Calcular la desviación estándar
+    double suma_diferencias_cuadradas = 0;
+    for(const auto& duracion : duraciones) {
+        suma_diferencias_cuadradas += pow(duracion - promedio, 2);
+    }
+    double desviacion_estandar = sqrt(suma_diferencias_cuadradas / duraciones.size());
 
-    // Ejemplo de uso de compresión y descompresión
-    //string mensaje = "abracadabra";
-    //cout << "Mensaje original: " << contenido << endl;
+    cout<< promedio<<","<<desviacion_estandar<<",";
 
-    // Comprimir el mensaje
-    auto start = chrono::high_resolution_clock::now();
-    queue<pair<string, int>> mensaje_comp = lz.comprimir(contenido);
-    auto end = std::chrono::high_resolution_clock::now();
-    chrono::duration<double, milli> elapsed = end - start;
-    cout << "Tiempo de compresión: " << elapsed.count() << " ms" << endl;
-    
-    auto start1 = chrono::high_resolution_clock::now();
-    string mensaje_descomp = lz.descomprimir(mensaje_comp);
-    auto end1 = std::chrono::high_resolution_clock::now();
-    chrono::duration<double, milli> elapsed1 = end1 - start1;
-    cout << "Tiempo de decompresión: " << elapsed1.count() << " ms" << endl;
-    // Mostrar la cola de pares comprimidos
-    //cout << "Mensaje comprimido (cola de pares): ";
-    //while (!mensaje_comp.empty()) {
-    //    auto par = mensaje_comp.front();
-    //    cout << "(" << par.first << ", " << par.second << ") ";
-    //    mensaje_comp.pop();
-    //}
-    //cout << endl;
-    //cout << "Mensaje descomprimido: " << mensaje_descomp << endl;
+
+    // Reiniciar el vector de duraciones para los tiempos de descompresión
+    duraciones.clear();
+
+    string mensaje_descomp;
+    for(int i=0; i < 30; i++){
+        auto start = chrono::high_resolution_clock::now();
+        mensaje_descomp = metodos_lz::descomprimir(mensaje_comp);
+        auto end = chrono::high_resolution_clock::now();
+        auto duration_open = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        duraciones.push_back(duration_open);
+    }
+    // Calcular el promedio
+    suma = 0;
+    for(const auto& duracion : duraciones) {
+        suma += duracion;
+    }
+    promedio = static_cast<double>(suma) / duraciones.size();
+    // Calcular la desviación estándar
+    suma_diferencias_cuadradas = 0;
+    for(const auto& duracion : duraciones) {
+        suma_diferencias_cuadradas += pow(duracion - promedio, 2);
+    }
+    desviacion_estandar = sqrt(suma_diferencias_cuadradas / duraciones.size());
+
+    cout<< promedio<<","<<desviacion_estandar<<endl;
 
     inputFile.close();
 
